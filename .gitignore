@@ -1,0 +1,5 @@
+*
+!*.py
+!run.x
+!README.md
+!.gitignore
