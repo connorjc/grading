@@ -61,9 +61,11 @@ for section, submissions in source_code.items():
                 open(CWD+'/'+section+'/'+code.split('_')[0]+"_comments.txt", 'a') as comment:
             if subprocess.run(cmd, cwd=CWD+'/'+section, stdout=err, stderr=subprocess.STDOUT).returncode == 0:
                 #Compile success: mv source & exectuable to compiler dir
-                print("Compilation successful: ", code)
                 if(os.path.getsize(CWD+'/'+section+'/'+code[:-4]+'.err') > 0):
+                    print("Compilation warnings: ", code)
                     print("-5:\tcompilation errors",file=comment)
+                else:
+                    print("Compilation successful: ", code)
                 print("\n\n*\n\nGraded by: Connor Christian",file=comment)
                 cmd = ["mv", code, code[:-4]+".x", code[:-4]+".err", "compiled/."]
                 subprocess.run(cmd, cwd=CWD+'/'+section)
@@ -82,13 +84,21 @@ for section, submissions in source_code.items():
             with open(CWD+'/'+section+'/compiled/'+x[:-2]+str(count)+'.out', 'w') as out,\
                 open(i,'r') as I, open(CWD+'/'+section+'/compiled/'+x[:-2]+str(count)+'.diff', 'w') as diff:
                 cmd = ["./"+x]
-                subprocess.run(cmd, cwd=CWD+'/'+section+'/compiled', stdin=I, stdout=out, stderr=subprocess.STDOUT, shell=True)
-                #cmd = ["diff", "-bBs", CWD+'/'+o, CWD+'/'+section+'/compiled/'+x[:-2]+str(count)+'.out']
-                #cmd = shlex.split("diff -Bbis --suppress-common-lines " + CWD+'/'+o + ' ' + CWD+'/'+section+'/compiled/'+x[:-2]+str(count)+'.out')
-                cmd = shlex.split("tput cols")
-                width = int(subprocess.check_output(cmd))
-                cmd = shlex.split("diff -Bbisy -W " + str(width) + " --suppress-common-lines " + CWD+'/'+o + ' ' + CWD+'/'+section+'/compiled/'+x[:-2]+str(count)+'.out')
-                subprocess.run(cmd, cwd=CWD+'/'+section+'/compiled', stdout=diff)
+                try:
+                    subprocess.run(cmd, cwd=CWD+'/'+section+'/compiled', \
+                        stdin=I, stdout=out, stderr=subprocess.STDOUT, \
+                        shell=True, timeout=10)
+                    #cmd = ["diff", "-bBs", CWD+'/'+o, CWD+'/'+section+'/compiled/'+x[:-2]+str(count)+'.out']
+                    #cmd = shlex.split("diff -Bbis --suppress-common-lines " + CWD+'/'+o + ' ' + CWD+'/'+section+'/compiled/'+x[:-2]+str(count)+'.out')
+                    cmd = shlex.split("tput cols")
+                    width = int(subprocess.check_output(cmd))
+                    cmd = shlex.split("diff -Bbisy -W " + str(width) + " --suppress-common-lines " + CWD+'/'+o + ' ' + CWD+'/'+section+'/compiled/'+x[:-2]+str(count)+'.out')
+                    subprocess.run(cmd, cwd=CWD+'/'+section+'/compiled', stdout=diff)
+                except subprocess.TimeoutExpired:
+                    print("INFINITE LOOP DETECTED")
+                    with open(CWD+'/'+section+'/compiled/'+x[:-2]+'.err', 'a') as err:
+                        print("INFINITE LOOP DETECTED", file=err)
+                    break
         #mkdir for with students name and move all files into it
         try:
             os.mkdir(CWD+'/'+section+'/compiled/'+students[x.split('_')[0]])
