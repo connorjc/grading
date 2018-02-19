@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import csv
 import os
+import pwd
 import shlex
 import subprocess
 """ Attempts to compile all the students submissions, organizing the
@@ -13,6 +14,8 @@ RED = "\033[31m"
 YELLOW = "\033[1;33m"   
 BLUE = "\033[1;34m"     #light blue
 NC = "\033[0m"
+
+NAME = pwd.getpwnam(str(subprocess.check_output("whoami")[:-1], 'utf-8'))[4]
 
 CWD = os.getcwd()
 DIR_CONTENTS = os.listdir(CWD)
@@ -73,15 +76,14 @@ for section, submissions in source_code.items():
                     print("-5:\tcompilation errors",file=comment)
                 else:
                     print("Compilation "+ GREEN +"successful: "+ NC, code)
-                print("\n\n*\n\nGraded by: Connor Christian",file=comment)
                 cmd = ["mv", code, code[:-4]+".x", code[:-4]+".err", "compiled/."]
                 subprocess.run(cmd, cwd=CWD+'/'+section)
             else:#Compile failure: mv source & err to fail dir
                 print("Compilation "+RED+"failed: "+NC, code)
                 print("-5:\tcompilation failed (-5 per fix up to 10 errors)", file=comment)
-                print("\n\n*\n\nGraded by: Connor Christian",file=comment)
                 cmd = ["mv", code, code[:-4]+".err", "failed/."]
                 subprocess.run(cmd, cwd=CWD+'/'+section)
+            print("\n\n*\n\nGraded by:", NAME,file=comment)
     # iterate over compiled source code and run it, testing the output
     for x in sorted(list(filter(lambda i: ".x" in i, os.listdir(CWD+'/'+section+'/compiled')))):
         count = 0
@@ -94,7 +96,7 @@ for section, submissions in source_code.items():
                 try:
                     subprocess.run(cmd, cwd=CWD+'/'+section+'/compiled', \
                         stdin=I, stdout=out, stderr=subprocess.STDOUT, \
-                        timeout=2)
+                        timeout=1)
                     #cmd = ["diff", "-bBs", CWD+'/'+o, CWD+'/'+section+'/compiled/'+x[:-2]+str(count)+'.out']
                     #cmd = shlex.split("diff -Bbis --suppress-common-lines " + CWD+'/'+o + ' ' + CWD+'/'+section+'/compiled/'+x[:-2]+str(count)+'.out')
                     cmd = shlex.split("tput cols")
