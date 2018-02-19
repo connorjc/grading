@@ -7,6 +7,13 @@ import subprocess
     source code and resutling files into failed/compiled directories.
     Diff output from executables.
 """
+
+GREEN = "\033[32m"    
+RED = "\033[31m"      
+YELLOW = "\033[1;33m"   
+BLUE = "\033[1;34m"     #light blue
+NC = "\033[0m"
+
 CWD = os.getcwd()
 DIR_CONTENTS = os.listdir(CWD)
 
@@ -38,20 +45,20 @@ for s in sections:
     source_code[s] = source
 
 for section, submissions in source_code.items():
-    print(section)
+    print(BLUE+section+NC)
     with open("duedate.txt", 'r') as due:
         due_date = due.readline()
         late_date = due.readline()
         cmd = 'find ./*.cpp -newermt \"' + due_date.strip() + '\" ! -newermt \"' + late_date.strip() + '\"'
         for cpp in subprocess.run(cmd, cwd=CWD+'/'+section, shell=True, stdout=subprocess.PIPE).stdout.split():
             cpp = (str(cpp)[4:].split('_')[0])
-            print("LATE PENALTY:", cpp)
+            print(RED + "LATE PENALTY:"+NC, cpp)
             with open(CWD+'/'+section+'/'+cpp+"_comments.txt", 'w') as comment:
                 print("-10:\tlate penalty (up to 24 hours)", file=comment)
         cmd = 'find ./*.cpp -newermt \"' + late_date + '\"'
         for cpp in subprocess.run(cmd, cwd=CWD+'/'+section, shell=True, stdout=subprocess.PIPE).stdout.split():
             cpp = (str(cpp)[4:].split('_')[0])
-            print("BEYOND LATE PENALTY:", cpp)
+            print(RED+ "BEYOND LATE PENALTY:"+ NC, cpp)
             with open(CWD+'/'+section+'/'+cpp+"_comments.txt", 'w') as comment:
                 print("BEYOND LATE PENALTY:", file=comment)
 
@@ -62,15 +69,15 @@ for section, submissions in source_code.items():
             if subprocess.run(cmd, cwd=CWD+'/'+section, stdout=err, stderr=subprocess.STDOUT).returncode == 0:
                 #Compile success: mv source & exectuable to compiler dir
                 if(os.path.getsize(CWD+'/'+section+'/'+code[:-4]+'.err') > 0):
-                    print("Compilation warnings: ", code)
+                    print("Compilation "+ YELLOW +"warnings: "+ NC, code)
                     print("-5:\tcompilation errors",file=comment)
                 else:
-                    print("Compilation successful: ", code)
+                    print("Compilation "+ GREEN +"successful: "+ NC, code)
                 print("\n\n*\n\nGraded by: Connor Christian",file=comment)
                 cmd = ["mv", code, code[:-4]+".x", code[:-4]+".err", "compiled/."]
                 subprocess.run(cmd, cwd=CWD+'/'+section)
             else:#Compile failure: mv source & err to fail dir
-                print("Compilation failed: ", code)
+                print("Compilation "+RED+"failed: "+NC, code)
                 print("-5:\tcompilation failed (-5 per fix up to 10 errors)", file=comment)
                 print("\n\n*\n\nGraded by: Connor Christian",file=comment)
                 cmd = ["mv", code, code[:-4]+".err", "failed/."]
@@ -87,7 +94,7 @@ for section, submissions in source_code.items():
                 try:
                     subprocess.run(cmd, cwd=CWD+'/'+section+'/compiled', \
                         stdin=I, stdout=out, stderr=subprocess.STDOUT, \
-                        timeout=10)
+                        timeout=2)
                     #cmd = ["diff", "-bBs", CWD+'/'+o, CWD+'/'+section+'/compiled/'+x[:-2]+str(count)+'.out']
                     #cmd = shlex.split("diff -Bbis --suppress-common-lines " + CWD+'/'+o + ' ' + CWD+'/'+section+'/compiled/'+x[:-2]+str(count)+'.out')
                     cmd = shlex.split("tput cols")
@@ -95,7 +102,7 @@ for section, submissions in source_code.items():
                     cmd = shlex.split("diff -Bbisy -W " + str(width) + " --suppress-common-lines " + CWD+'/'+o + ' ' + CWD+'/'+section+'/compiled/'+x[:-2]+str(count)+'.out')
                     subprocess.run(cmd, cwd=CWD+'/'+section+'/compiled', stdout=diff)
                 except subprocess.TimeoutExpired:
-                    print("INFINITE LOOP DETECTED")
+                    print(RED+ "INFINITE LOOP DETECTED"+NC)
                     with open(CWD+'/'+section+'/compiled/'+x[:-2]+'.err', 'a') as err:
                         print("INFINITE LOOP DETECTED", file=err)
                     break

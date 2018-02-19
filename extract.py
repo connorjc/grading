@@ -6,6 +6,10 @@ import csv
 import os
 import tarfile
 
+
+BLUE = "\033[1;34m" #light blue
+NC = "\033[0m"
+
 CWD = os.getcwd()
 DIR_CONTENTS = os.listdir(CWD)
 
@@ -15,7 +19,7 @@ assert "roster.csv" in DIR_CONTENTS, "Must have csv containing students: Usernam
 hw_dir = list(filter(lambda x: "hw" in x ,(filter(os.path.isdir,DIR_CONTENTS))))
 assert hw_dir, "Must have a hw dir"
 hw_dir = max(hw_dir)+'/'
-print("Using directory:", hw_dir)
+print("Using directory:", BLUE, hw_dir, NC)
 
 roster = dict() #roster[username] = section
 with open("roster.csv", 'r') as csvfile:
@@ -43,7 +47,7 @@ os.chdir(CWD)
 tar_name = list(filter(lambda x: ".tar" in x,DIR_CONTENTS))
 assert tar_name, "Must upload tarball containing hw submissions"
 tar_name = tar_name[0]
-print("Using assignment archive:", tar_name)
+print("Using assignment archive:", BLUE, tar_name, NC)
 
 with tarfile.open(tar_name, 'r') as tar:
     # extract only my students from tar into corresponding directories
