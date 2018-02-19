@@ -3,3 +3,5 @@
 !run.x
 !README.md
 !.gitignore
+!.roster.csv.example
+!.duedate.txt.example
