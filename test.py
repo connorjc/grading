@@ -87,7 +87,7 @@ for section, submissions in source_code.items():
                 try:
                     subprocess.run(cmd, cwd=CWD+'/'+section+'/compiled', \
                         stdin=I, stdout=out, stderr=subprocess.STDOUT, \
-                        shell=True, timeout=10)
+                        timeout=10)
                     #cmd = ["diff", "-bBs", CWD+'/'+o, CWD+'/'+section+'/compiled/'+x[:-2]+str(count)+'.out']
                     #cmd = shlex.split("diff -Bbis --suppress-common-lines " + CWD+'/'+o + ' ' + CWD+'/'+section+'/compiled/'+x[:-2]+str(count)+'.out')
                     cmd = shlex.split("tput cols")
