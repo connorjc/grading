@@ -47,9 +47,9 @@ After installing python3 and cloning the repo, the scripts expect certain files 
 
 #### Files:
 
-`roster.csv`
+`roster.csv` - [example][1]
 
-`duedate.txt`
+`duedate.txt` - [example][2]
 
 * First line is the due date for full points.
 * Second line is the due date for the late penalty.
@@ -62,6 +62,9 @@ After installing python3 and cloning the repo, the scripts expect certain files 
 
 * The submissions within the tarball are expected as `<username>_<assignmentFileName>.cpp`
  * usernames in `roster.csv` should be a subset of those in the files in the tarball
+
+[1]: .roster.csv.example
+[2]: .duedate.txt.example
 
 #### Directory Structure
 
