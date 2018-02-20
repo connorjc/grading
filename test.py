@@ -15,7 +15,7 @@ YELLOW = "\033[1;33m"
 BLUE = "\033[1;34m"     #light blue
 NC = "\033[0m"
 
-NAME = pwd.getpwnam(str(subprocess.check_output("whoami")[:-1], 'utf-8'))[4]
+NAME = pwd.getpwnam(str(subprocess.check_output("whoami")[:-1], 'utf-8'))[4].split(',')[0]
 
 CWD = os.getcwd()
 DIR_CONTENTS = os.listdir(CWD)
@@ -97,11 +97,13 @@ for section, submissions in source_code.items():
                     subprocess.run(cmd, cwd=CWD+'/'+section+'/compiled', \
                         stdin=I, stdout=out, stderr=subprocess.STDOUT, \
                         timeout=1)
-                    #cmd = ["diff", "-bBs", CWD+'/'+o, CWD+'/'+section+'/compiled/'+x[:-2]+str(count)+'.out']
+                    cmd = ["diff", "-bBis", CWD+'/'+o, CWD+'/'+section+'/compiled/'+x[:-2]+str(count)+'.out']
                     #cmd = shlex.split("diff -Bbis --suppress-common-lines " + CWD+'/'+o + ' ' + CWD+'/'+section+'/compiled/'+x[:-2]+str(count)+'.out')
+                    '''
                     cmd = shlex.split("tput cols")
                     width = int(subprocess.check_output(cmd))
                     cmd = shlex.split("diff -Bbisy -W " + str(width) + " --suppress-common-lines " + CWD+'/'+o + ' ' + CWD+'/'+section+'/compiled/'+x[:-2]+str(count)+'.out')
+                    '''
                     subprocess.run(cmd, cwd=CWD+'/'+section+'/compiled', stdout=diff)
                 except subprocess.TimeoutExpired:
                     print(RED+ "INFINITE LOOP DETECTED"+NC)
