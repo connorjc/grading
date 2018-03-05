@@ -25,9 +25,12 @@ What things you need to install the software and how to install them
 
 ```sh
 python3
+g++
 ```
 
 ### Installing
+
+#### Install python3
 
 ```sh
 sudo apt-get install python3
@@ -40,6 +43,21 @@ python3 --version
 ```
 
 Should be python3.5+
+
+#### Install g++
+
+```sh
+sudo apt-get install g++
+```
+
+#### Test Installation
+
+```sh
+g++ --version
+```
+
+Check to see if any version appears
+
 
 ### Requirements
 
