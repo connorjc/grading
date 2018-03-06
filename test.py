@@ -36,6 +36,14 @@ assert inputs, "Must create input files"
 outputs = sorted(list(filter(lambda i: "output" in i, (filter(os.path.isfile, DIR_CONTENTS)))))
 assert outputs, "Must create output files"
 
+rand = len(list(filter(lambda i: "rand" in i, (filter(os.path.isfile, DIR_CONTENTS)))))
+for r in range(1,rand+1):
+    if r == 1:
+        os.system("gcc -Wall -fPIC -shared -o pseudorand1.so ../pseudorand.c")
+        continue
+    os.system("tr '1' \'"+str(r)+"\' < ../pseudorand.c > ../pseudorand"+str(r)+".c")
+    os.system("gcc -Wall -fPIC -shared -o pseudorand"+str(r)+".so ../pseudorand"+str(r)+".c")
+
 test_files = list(zip(inputs, outputs))
 
 assert "duedate.txt" in DIR_CONTENTS, "Must create duedate file"
@@ -73,14 +81,14 @@ for section, submissions in source_code.items():
                 #Compile success: mv source & exectuable to compiler dir
                 if(os.path.getsize(CWD+'/'+section+'/'+code[:-4]+'.err') > 0):
                     print("Compilation "+ YELLOW +"warnings: "+ NC, code)
-                    print("-5:\tcompilation errors",file=comment)
+                    print("-5:\t\tcompilation errors",file=comment)
                 else:
                     print("Compilation "+ GREEN +"successful: "+ NC, code)
                 cmd = ["mv", code, code[:-4]+".x", code[:-4]+".err", "compiled/."]
                 subprocess.run(cmd, cwd=CWD+'/'+section)
             else:#Compile failure: mv source & err to fail dir
                 print("Compilation "+RED+"failed: "+NC, code)
-                print("-5:\tcompilation failed (-5 per fix up to 10 errors)", file=comment)
+                print("-5:\t\tcompilation failed (-5 per fix up to 10 errors)", file=comment)
                 cmd = ["mv", code, code[:-4]+".err", "failed/."]
                 subprocess.run(cmd, cwd=CWD+'/'+section)
             print("\n\n*\n\nGraded by:", NAME,file=comment)
@@ -92,11 +100,22 @@ for section, submissions in source_code.items():
             count += 1
             with open(CWD+'/'+section+'/compiled/'+x[:-2]+str(count)+'.out', 'w') as out,\
                 open(i,'r') as I, open(CWD+'/'+section+'/compiled/'+x[:-2]+str(count)+'.diff', 'w') as diff:
-                cmd = ["./"+x]
+                
+                if rand == 0:
+                    cmd = ["./"+x]
+                else:
+                    rand_lib = "../../pseudorand"+str(count)+".so"
+                    cmd = ["LD_PRELOAD="+rand_lib+" ./"+x]
                 try:
-                    subprocess.run(cmd, cwd=CWD+'/'+section+'/compiled', \
-                        stdin=I, stdout=out, stderr=subprocess.STDOUT, \
-                        timeout=1)
+                    if rand == 0:
+                        subprocess.run(cmd, cwd=CWD+'/'+section+'/compiled', \
+                            stdin=I, stdout=out, stderr=subprocess.STDOUT, \
+                            timeout=1)
+                    else:
+                        subprocess.run(cmd, cwd=CWD+'/'+section+'/compiled', \
+                            stdin=I, stdout=out, stderr=subprocess.STDOUT, \
+                            shell=True, timeout=1)
+
                     cmd = ["diff", "-bBis", CWD+'/'+o, CWD+'/'+section+'/compiled/'+x[:-2]+str(count)+'.out']
                     #cmd = shlex.split("diff -Bbis --suppress-common-lines " + CWD+'/'+o + ' ' + CWD+'/'+section+'/compiled/'+x[:-2]+str(count)+'.out')
                     '''
@@ -118,3 +137,8 @@ for section, submissions in source_code.items():
             print("Directory", CWD+'/'+section+'/compiled/\''+students[x.split('_')[0]]+'\'' ,"already exists")
         cmd = ["mv "+x[:-2]+'* \''+students[x.split('_')[0]]+"\'/."]
         subprocess.run(cmd, cwd=CWD+'/'+section+'/compiled', shell=True)
+if rand != 0:
+    os.system("rm pseudorand?.so")
+    for i in range(1,rand+1):
+        if i > 1:
+            os.system("rm ../pseudorand"+str(i)+".c")

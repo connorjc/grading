@@ -1,5 +1,6 @@
 *
 !*.py
+!pseudorand.c
 !run.x
 !README.md
 !.gitignore
