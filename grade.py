@@ -27,7 +27,7 @@ with open(CWD+'/'+"GRADES.csv", 'w') as grades:
         assert comments, "Execute test.py first"
         for c in comments:
             with open(CWD+'/'+s+'/'+c, 'r') as comment:
-                match = re.findall(r'\-(\d+)', comment.read())
+                match = re.findall(r'\-(\d+):', comment.read())
                 if match:
                     total = 100
                     for g in match:

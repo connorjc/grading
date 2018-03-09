@@ -81,14 +81,14 @@ for section, submissions in source_code.items():
                 #Compile success: mv source & exectuable to compiler dir
                 if(os.path.getsize(CWD+'/'+section+'/'+code[:-4]+'.err') > 0):
                     print("Compilation "+ YELLOW +"warnings: "+ NC, code)
-                    print("-5:\t\tcompilation errors",file=comment)
+                    print("-5:\tcompilation errors",file=comment)
                 else:
                     print("Compilation "+ GREEN +"successful: "+ NC, code)
                 cmd = ["mv", code, code[:-4]+".x", code[:-4]+".err", "compiled/."]
                 subprocess.run(cmd, cwd=CWD+'/'+section)
             else:#Compile failure: mv source & err to fail dir
                 print("Compilation "+RED+"failed: "+NC, code)
-                print("-5:\t\tcompilation failed (-5 per fix up to 10 errors)", file=comment)
+                print("-5:\tcompilation failed (-5 per fix up to 10 errors)", file=comment)
                 cmd = ["mv", code, code[:-4]+".err", "failed/."]
                 subprocess.run(cmd, cwd=CWD+'/'+section)
             print("\n\n*\n\nGraded by:", NAME,file=comment)
