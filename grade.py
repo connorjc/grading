@@ -27,11 +27,14 @@ with open(CWD+'/'+"GRADES.csv", 'w') as grades:
         assert comments, "Execute test.py first"
         for c in comments:
             with open(CWD+'/'+s+'/'+c, 'r') as comment:
-                match = re.findall(r'\-(\d+):', comment.read())
+                match = re.findall(r'\-(\d+):|\+(\d+):', comment.read())
                 if match:
                     total = 100
                     for g in match:
-                        total -= int(g)
+                        if g[0] != "":
+                            total -= int(g[0])
+                        else:
+                            total += int(g[1])
                     grades.append([s, students[c.split('_')[0]], total])
                     print(s, c.split('_')[0], "grade:", total)
                 else:
