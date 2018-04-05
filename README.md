@@ -12,6 +12,7 @@ After the automatic and manual grading is complete, `grade.py` can be executed t
 * `test.py` - Using various input/output files and a `duedate.txt`, the extracted source code is further organized and tested
 * `grade.py` - Iterates over all `<username>_comments.txt`, printing the total grade per student in a `GRADES.csv`
 * `run.x` - A bash script that executes `extract.py` then `test.py`
+* `pseudorand.c` - A short C overload of the STL rand function which allows passing a sequence of numbers to the homework executable
 
 [C++ Programming for Majors]: http://www.cs.fsu.edu/~vastola/cop3363/
 
@@ -81,6 +82,12 @@ After installing python3 and cloning the repo, the scripts expect certain files 
 * The submissions within the tarball are expected as `<username>_<assignmentFileName>.cpp`
  * usernames in `roster.csv` should be a subset of those in the files in the tarball
 
+##### Optional:
+`rand1.txt`
+
+* Each rand file must be associated with a matching `pseudorand.c` with the same integer suffix
+
+
 [1]: .roster.csv.example
 [2]: .duedate.txt.example
 
@@ -90,16 +97,19 @@ After installing python3 and cloning the repo, the scripts expect certain files 
  * ex: `hw1/  hw2/  hw3/` etc
 * `input.txt` and `output.txt` should contain an integer suffix differentiating the test suites and maintaing the mapping of each input file with its output file.
  * ex: `input1.txt  input2.txt  input3.txt ... output1.txt  output2.txt  output3.txt ...`
-
+* `rand1.txt` should only be included if you will be using it. Also if you have multiple sequences, they should each be in their own `rand#.txt`
+ * Note: that if you have multiple rand files you also need multiple `pseudorand.c` with a matching integer suffix. Make sure to edite the file name in `pseudorand.c` as well.
 ```sh
 grading/
   extract.py
   grade.py
+  pseudorand.c
   hw/
     duedate.txt
-    input.txt
     example.tar
+    input.txt
     output.txt
+    rand1.txt
   roster.csv
   run.x
   test.py
@@ -147,7 +157,7 @@ python3 grade.py
 Logging is produced to `stdout` showing at what stage the script is at as well as _anomalies_ such as:
 
 * Late penalties
-* Compilation failures and warningsx
+* Compilation failures and warnings
 * Detected infinite loops
 
 After successful completion of the scripts, several files and directories will be generated within `hw/`:
@@ -157,4 +167,4 @@ After successful completion of the scripts, several files and directories will b
 * `section?/compiled` - source code that compiles with or without warnings are moved here
 * `section?/failed` - source code that **fails** to compile is moved here
 * `section?/<username>_comments.txt` - automatically generated but **must be edited during manual grading**
-* `GRADES.csv` - generated based on the docked points in the `<username>_comments.txt` files after manual grading  for easy updating of the grade book
+* `GRADES.csv` - generated based on the docked or added points in the `<username>_comments.txt` files after manual grading  for easy updating of the grade book
