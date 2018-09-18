@@ -74,7 +74,8 @@ for section, submissions in source_code.items():
                 print("BEYOND LATE PENALTY:", file=comment)
 
     for code in submissions:
-        cmd = ["g++", code, "-o", code[:-4]+".x"]
+        cmd = ["g++", "-std=c++11", code, "-o", code[:-4]+".x"] #c++11
+        #cmd = ["g++", code, "-o", code[:-4]+".x"] #c++98
         with open(CWD+'/'+section+'/'+code[:-4]+'.err', 'a') as err ,\
                 open(CWD+'/'+section+'/'+code.split('_')[0]+"_comments.txt", 'a') as comment:
             if subprocess.run(cmd, cwd=CWD+'/'+section, stdout=err, stderr=subprocess.STDOUT).returncode == 0:
