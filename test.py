@@ -31,10 +31,8 @@ os.chdir(CWD)
 
 sections = list(filter(os.path.isdir, DIR_CONTENTS))
 inputs = sorted(list(filter(lambda i: "input" in i, (filter(os.path.isfile, DIR_CONTENTS)))))
-assert inputs, "Must create input files"
 
 outputs = sorted(list(filter(lambda i: "output" in i, (filter(os.path.isfile, DIR_CONTENTS)))))
-assert outputs, "Must create output files"
 
 rand = len(list(filter(lambda i: "rand" in i, (filter(os.path.isfile, DIR_CONTENTS)))))
 for r in range(1,rand+1):
@@ -88,7 +86,7 @@ for section, submissions in source_code.items():
                 cmd = ["mv", code, code[:-4]+".x", code[:-4]+".err", "compiled/."]
                 subprocess.run(cmd, cwd=CWD+'/'+section)
             else:#Compile failure: mv source & err to fail dir
-                print("Compilation "+RED+"failed: "+NC, code)
+                print("Compilation "+RED+"failed:     "+NC, code)
                 print("-5:\tcompilation failed (-5 per fix up to 10 errors)", file=comment)
                 cmd = ["mv", code, code[:-4]+".err", "failed/."]
                 subprocess.run(cmd, cwd=CWD+'/'+section)
