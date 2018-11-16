@@ -39,6 +39,6 @@ with open(CWD+'/'+"GRADES.csv", 'w') as grades:
                     print(s, c.split('_')[0], "grade:", total)
                 else:
                     grades.append([s, students[c.split('_')[0]], 100])
-                    print(s, c.split('_')[0], "100"
+                    print(s, c.split('_')[0], "100")
         for g in sorted(grades, key=lambda grade: grade[1]):
             gradewriter.writerow(g)
