@@ -140,13 +140,13 @@ python3 test.py
 
 ### After manual grading
 
-####Method 1
+#### Method 1
 
 ```sh
 ./grade.py
 ```
 
-####Method 2
+#### Method 2
 
 ```python
 python3 grade.py
