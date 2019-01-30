@@ -9,6 +9,7 @@ Traversing through the created directory tree and reviewing the generated output
 After the automatic and manual grading is complete, `grade.py` can be executed to calculate the total grade per student for easy uploading.
 
 * `extract.py` - Only extracts students from a tarball listed in `roster.csv` and organizes them by section.
+* `format.py` - Only extracts students' submissions from a zipfile and reformats them into a tarball expected by the rest of the scripts
 * `test.py` - Using various input/output files and a `duedate.txt`, the extracted source code is further organized and tested
 * `grade.py` - Iterates over all `<username>_comments.txt`, printing the total grade per student in a `GRADES.csv`
 * `run.x` - A bash script that executes `extract.py` then `test.py`
@@ -102,6 +103,7 @@ After installing python3 and cloning the repo, the scripts expect certain files 
 ```sh
 grading/
   extract.py
+  format.py
   grade.py
   pseudorand.c
   hw/
@@ -126,6 +128,14 @@ grading/
 
 #### Method 2
 
+**For COP3014 only:**
+
+```sh
+./format.py
+```
+
+**For COP3363 & COP3014:**
+
 ```sh
 ./execute.py
 ./test.py
@@ -133,6 +143,13 @@ grading/
 
 #### Method 3
 
+**For COP3014 only:**
+
+```sh
+python3 format.py
+```
+
+**For COP3363 & COP3014:**
 ```python
 python3 execute.py
 python3 test.py
