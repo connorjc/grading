@@ -57,4 +57,3 @@ with tarfile.open(tar_name, 'r') as tar:
             if username in tarinfo.name:
                 tar.extract(tarinfo.name, path=section)
                 print("Unpacking archive:", section, tarinfo.name)
-                break
