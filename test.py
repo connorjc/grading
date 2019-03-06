@@ -9,9 +9,9 @@ import subprocess
     Diff output from executables.
 """
 
-GREEN = "\033[32m"    
-RED = "\033[31m"      
-YELLOW = "\033[1;33m"   
+GREEN = "\033[32m"
+RED = "\033[31m"
+YELLOW = "\033[1;33m"
 BLUE = "\033[1;34m"     #light blue
 NC = "\033[0m"
 
@@ -42,11 +42,14 @@ for r in range(1,rand+1):
     os.system("tr '1' \'"+str(r)+"\' < ../pseudorand.c > ../pseudorand"+str(r)+".c")
     os.system("gcc -Wall -fPIC -shared -o pseudorand"+str(r)+".so ../pseudorand"+str(r)+".c")
 
-test_files = list(zip(inputs, outputs))
+if inputs != [] and outputs == []:
+    test_files = list(zip(inputs, [None for _ in range(len(inputs))]))
+else:
+    test_files = list(zip(inputs, outputs))
 
 assert "duedate.txt" in DIR_CONTENTS, "Must create duedate file"
 
-source_code = dict() 
+source_code = dict()
 assert sections, "Execute extract.py first"
 for s in sections:
     source = list(filter(lambda x: ".cpp" in x,os.listdir(CWD+'/'+s)))
@@ -99,7 +102,7 @@ for section, submissions in source_code.items():
             count += 1
             with open(CWD+'/'+section+'/compiled/'+x[:-2]+str(count)+'.out', 'w') as out,\
                 open(i,'r') as I, open(CWD+'/'+section+'/compiled/'+x[:-2]+str(count)+'.diff', 'w') as diff:
-                
+
                 if rand == 0:
                     cmd = ["./"+x]
                 else:
@@ -109,25 +112,24 @@ for section, submissions in source_code.items():
                     if rand == 0:
                         subprocess.run(cmd, cwd=CWD+'/'+section+'/compiled', \
                             stdin=I, stdout=out, stderr=subprocess.STDOUT, \
-                            timeout=1)
+                            timeout=95)
                     else:
                         subprocess.run(cmd, cwd=CWD+'/'+section+'/compiled', \
                             stdin=I, stdout=out, stderr=subprocess.STDOUT, \
-                            shell=True, timeout=1)
-
-                    cmd = ["diff", "-bBis", CWD+'/'+o, CWD+'/'+section+'/compiled/'+x[:-2]+str(count)+'.out']
-                    #cmd = shlex.split("diff -Bbis --suppress-common-lines " + CWD+'/'+o + ' ' + CWD+'/'+section+'/compiled/'+x[:-2]+str(count)+'.out')
-                    '''
-                    cmd = shlex.split("tput cols")
-                    width = int(subprocess.check_output(cmd))
-                    cmd = shlex.split("diff -Bbisy -W " + str(width) + " --suppress-common-lines " + CWD+'/'+o + ' ' + CWD+'/'+section+'/compiled/'+x[:-2]+str(count)+'.out')
-                    '''
-                    subprocess.run(cmd, cwd=CWD+'/'+section+'/compiled', stdout=diff)
+                            shell=True, timeout=95)
+                    if o is not None:
+                        cmd = ["diff", "-bBis", CWD+'/'+o, CWD+'/'+section+'/compiled/'+x[:-2]+str(count)+'.out']
+                        #cmd = shlex.split("diff -Bbis --suppress-common-lines " + CWD+'/'+o + ' ' + CWD+'/'+section+'/compiled/'+x[:-2]+str(count)+'.out')
+                        '''
+                        cmd = shlex.split("tput cols")
+                        width = int(subprocess.check_output(cmd))
+                        cmd = shlex.split("diff -Bbisy -W " + str(width) + " --suppress-common-lines " + CWD+'/'+o + ' ' + CWD+'/'+section+'/compiled/'+x[:-2]+str(count)+'.out')
+                        '''
+                        subprocess.run(cmd, cwd=CWD+'/'+section+'/compiled', stdout=diff)
                 except subprocess.TimeoutExpired:
                     print(RED+ "INFINITE LOOP DETECTED"+NC)
                     with open(CWD+'/'+section+'/compiled/'+x[:-2]+'.err', 'a') as err:
                         print("INFINITE LOOP DETECTED", file=err)
-                    break
         #mkdir for with students name and move all files into it
         try:
             os.mkdir(CWD+'/'+section+'/compiled/'+students[x.split('_')[0]])
