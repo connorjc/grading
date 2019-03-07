@@ -35,6 +35,7 @@ with open(CWD+'/'+"GRADES.csv", 'w') as grades:
                             total -= int(g[0])
                         else:
                             total += int(g[1])
+                    total = 0 if total < 0 else total
                     grades.append([s, students[c.split('_')[0]], total])
                     print(s, c.split('_')[0], "grade:", total)
                 else:
