@@ -112,11 +112,11 @@ for section, submissions in source_code.items():
                     if rand == 0:
                         subprocess.run(cmd, cwd=CWD+'/'+section+'/compiled', \
                             stdin=I, stdout=out, stderr=subprocess.STDOUT, \
-                            timeout=95)
+                            timeout=1)#timeout=95)
                     else:
                         subprocess.run(cmd, cwd=CWD+'/'+section+'/compiled', \
                             stdin=I, stdout=out, stderr=subprocess.STDOUT, \
-                            shell=True, timeout=95)
+                            shell=True, timeout=1)#timeout=95)
                     if o is not None:
                         cmd = ["diff", "-bBis", CWD+'/'+o, CWD+'/'+section+'/compiled/'+x[:-2]+str(count)+'.out']
                         #cmd = shlex.split("diff -Bbis --suppress-common-lines " + CWD+'/'+o + ' ' + CWD+'/'+section+'/compiled/'+x[:-2]+str(count)+'.out')
