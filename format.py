@@ -26,7 +26,6 @@ import tarfile
 my_students = dict()
 with open("roster.csv", 'r') as roster:
     reader = csv.DictReader(roster)
-    next(reader)
     for row in reader:
         name = row["Name"]
         name = re.sub('[, -]','',name).lower()
