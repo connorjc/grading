@@ -63,6 +63,7 @@ with open("duedate.txt", 'r') as duedate:
 #STEP 4.2: find my students files 
 files = os.listdir(CWD+zip_name[:-4])
 for f in files:
+    f = re.sub(r'\s+', '\\ ', f)
     match = re.match(r'(\w*?)_(late_)?(\d*_){,}(.*?.cpp)',f)
     orig_file = match.group(0)
     name = match.group(1)
@@ -70,6 +71,7 @@ for f in files:
     source_code = match.group(4)
     if name in my_students.keys():
         new_file = my_students[name] + '_' + source_code
+        new_file = re.sub(r'(\\ )+', '', new_file)
         cmd = "mv " + orig_file + ' ' + new_file
         subprocess.run(cmd, cwd=CWD+zip_name[:-4], shell=True)
 
